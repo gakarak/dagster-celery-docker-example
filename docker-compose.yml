@@ -27,6 +27,7 @@ services:
       - '9000:9000'
     volumes:
       - ./.minio:/data
+      - ./data:/data_ppl
     environment:
       MINIO_ACCESS_KEY: 'minio'
       MINIO_SECRET_KEY: 'miniosecret'
@@ -42,9 +43,14 @@ services:
   worker-generic:
     build: .
     image: dagster-celery-worker
+    depends_on:
+      - rabbit
+      - postgres
     volumes:
       - ./workflows:/app
-    entrypoint: "dagster-celery worker start --loglevel=info --app=dagster_celery.app -y celeryconfig.yaml --name generic-worker"
+      - ./data:/data_ppl
+    # entrypoint: "dagster-celery worker start --loglevel=info --app=dagster_celery.app -y celeryconfig.yaml -q cpu --name generic-worker"
+    command: "dagster-celery worker start --loglevel=info --app=dagster_celery.app -y celeryconfig.yaml -q cpu --name generic-worker"
     environment: 
       DAGSTER_HOME: /app
 
@@ -52,20 +58,31 @@ services:
   worker-gpu:
     build: .
     image: dagster-celery-worker
+    depends_on: 
+      - rabbit
+      - postgres
     volumes:
       - ./workflows:/app
-    entrypoint: "dagster-celery worker start --loglevel=info --app=dagster_celery.app -y celeryconfig.yaml -q gpu --name gpu-worker"
+      - ./data:/data_ppl
+    # entrypoint: "dagster-celery worker start --loglevel=info --app=dagster_celery.app -y celeryconfig.yaml -q gpu --name gpu-worker"
+    command: "dagster-celery worker start --loglevel=info --app=dagster_celery.app -y celeryconfig.yaml -q gpu --name gpu-worker"
     environment: 
       DAGSTER_HOME: /app
 
   dagit:
     build: .
     image: dagster-celery-worker # Use the worker image for convenience
+    depends_on: 
+      - rabbit
+      - postgres
     ports:
       - 3000:3000 # Dagit
     volumes:
       - ./workflows:/app
-    entrypoint: dagit --host 0.0.0.0 -f dagster_pipeline.py
+      - ./data:/data_ppl
+    command: dagit --host 0.0.0.0 -w workspace.yaml
+    # entrypoint: dagit --host 0.0.0.0 -w workspace.yaml
+    # entrypoint: dagit --host 0.0.0.0 -f dagster_test_pipeline.py
     environment: 
       DAGSTER_HOME: /app
           
