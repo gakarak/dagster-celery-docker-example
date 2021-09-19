@@ -1,0 +1,15 @@
+celery
+sqlalchemy
+psycopg2
+dagster
+dagster-celery
+dagster-postgres
+dagster-aws
+dagster-cron
+dagit
+boto3
+graphql-ws
+fire
+pandas
+numpy
+scikit-image
