@@ -97,9 +97,16 @@ def solid_pipeline():
     return files_info
 
 
+@pipeline
+def solid_pipeline_2():
+    files_info = get_files_paths()
+    return files_info
+
+
+
 @repository
 def map_pipeline_repo():
-    return [map_pipeline, solid_pipeline]
+    return [map_pipeline, solid_pipeline, solid_pipeline_2]
 
 
 def main(
