@@ -50,7 +50,7 @@ services:
       - ./workflows:/app
       - ./data:/data_ppl
     # entrypoint: "dagster-celery worker start --loglevel=info --app=dagster_celery.app -y celeryconfig.yaml -q cpu --name generic-worker"
-    command: "dagster-celery worker start --loglevel=info --app=dagster_celery.app -y celeryconfig.yaml -q cpu --name generic-worker"
+    command: "dagster-celery worker start --loglevel=info --app=dagster_celery.app -y celeryconfig.yaml -q cpu-type-1 --name generic-worker"
     environment: 
       DAGSTER_HOME: /app
 
